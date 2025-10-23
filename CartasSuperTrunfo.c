@@ -6,12 +6,14 @@
 typedef struct {
     char estado[30], codigo[4], nome_cidade[40];
     int populacao, pontos_turisticos;
-    float area, pib;
+    float area, pib, dens_pop, pib_per_capta;
 } Carta;
 
 Carta le_carta(void);
 void imprime_carta(Carta carta);
 int le_qtd_cartas(void);
+float calcula_dens_pop(Carta carta);
+float calcula_pib_per_capta(Carta carta);
 
 // Main:
 
@@ -20,13 +22,16 @@ int main(void) {
 
     Carta cartas[qtd_cartas];
 
-    // le as cartas
+    // Le as cartas
     for (int i = 0; i < qtd_cartas; i++) {
         printf("Adicione os dados da Carta %d:\n", i + 1);
         cartas[i] = le_carta();
+        // Calcula Dados
+        cartas[i].dens_pop = calcula_dens_pop(cartas[i]);
+        cartas[i].pib_per_capta = calcula_pib_per_capta(cartas[i]);
     }
 
-    // imprime as cartas
+    // Imprime as cartas
     for (int i = 0; i < qtd_cartas; i++) {
         printf("\nCarta %d:\n", i + 1);
         imprime_carta(cartas[i]);
@@ -81,6 +86,8 @@ void imprime_carta(Carta carta) {
     printf("Area: %.2f km² \n", carta.area);
     printf("PIB: %.2f bilhões de reais\n", carta.pib);
     printf("Pontos turisticos: %d\n", carta.pontos_turisticos);
+    printf("Densidade Populacional: %.2f hab/km²\n", carta.dens_pop);
+    printf("PIB per Capita: %.2f reais\n", carta.pib_per_capta);
 }
 
 int le_qtd_cartas(void) {
@@ -89,4 +96,13 @@ int le_qtd_cartas(void) {
     scanf("%d", &qtd);
 
     return qtd;
+}
+
+float calcula_dens_pop(Carta carta) {
+    return carta.populacao / carta.area;
+}
+
+float calcula_pib_per_capta(Carta carta) {
+    float pib = carta.pib / carta.populacao; // PIB per capta em bilhoes de reais.
+    return pib * 1000000000; // PIB per capta em reais.
 }
